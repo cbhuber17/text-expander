@@ -44,27 +44,45 @@ function TextExpander({
   defaultExpanded = false,
   children,
 }) {
-  // Function to count number of words
-  function countWords(str) {
-    return str.trim().split(/\s+/).length;
-  }
-
-  // TODO: Not sure need this state yet
-  const [numWords, setNumWords] = useState(countWords(children));
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
-  const words = children.split(" ");
+  function handleExpandedText() {
+    setIsExpanded(!isExpanded);
+  }
 
-  const reducedWords = words.slice(0, collapsedNumWords).join(" ");
+  const words = children.trim().split(" ");
 
-  // TODO: OnClick activation of expanding and collapsing text
-  // TODO: Condtional to render collapseButtonText or expandButtonText
+  const reducedWords = words.slice(0, collapsedNumWords).join(" ") + "... ";
+
   return (
     <div className={className}>
-      {reducedWords}
-      {"..."}
-      <span style={{ color: buttonColor, cursor: "pointer" }}>
-        {expandButtonText}
+      {isExpanded ? (
+        <Text
+          handleExpandedText={handleExpandedText}
+          buttonText={" " + collapseButtonText}
+          buttonColor={buttonColor}
+          text={children}
+        />
+      ) : (
+        <Text
+          handleExpandedText={handleExpandedText}
+          buttonText={expandButtonText}
+          buttonColor={buttonColor}
+          text={reducedWords}
+        />
+      )}
+    </div>
+  );
+}
+
+function Text({ handleExpandedText, buttonText, buttonColor, text }) {
+  const buttonStyle = { color: buttonColor, cursor: "pointer" };
+
+  return (
+    <div>
+      {text}
+      <span style={buttonStyle} onClick={handleExpandedText}>
+        {" " + buttonText}
       </span>
     </div>
   );
